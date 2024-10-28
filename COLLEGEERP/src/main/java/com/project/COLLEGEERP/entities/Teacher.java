@@ -1,5 +1,6 @@
 package com.project.COLLEGEERP.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.COLLEGEERP.helper.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -27,4 +28,9 @@ public class Teacher
 
     @OneToMany(mappedBy = "teacher")
     private List<Course> courses=new ArrayList<>();
+
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private User user;
 }

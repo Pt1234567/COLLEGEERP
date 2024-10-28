@@ -1,5 +1,6 @@
 package com.project.COLLEGEERP.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.COLLEGEERP.helper.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -40,4 +41,9 @@ public class Student {
 
     @OneToMany(mappedBy = "student")
     private List<Attendance> attendances=new ArrayList<>();
+
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private User user;
 }

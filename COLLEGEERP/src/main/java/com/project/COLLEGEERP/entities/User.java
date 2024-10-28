@@ -1,10 +1,7 @@
 package com.project.COLLEGEERP.entities;
 
 import com.project.COLLEGEERP.helper.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -22,6 +19,12 @@ public class User {
 
     private String password;
 
-    private boolean isPasswordSet=false;
+    private boolean isPasswordSet;
+
+    @OneToOne(mappedBy = "user" ,cascade = CascadeType.ALL)
+    private Student student;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    private Teacher teacher;
 
 }
