@@ -1,6 +1,7 @@
 package com.project.COLLEGEERP.Service.Impl;
 
 import com.project.COLLEGEERP.Service.UserService;
+import com.project.COLLEGEERP.config.JwtProvider;
 import com.project.COLLEGEERP.entities.*;
 import com.project.COLLEGEERP.helper.Role;
 import com.project.COLLEGEERP.repository.*;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -31,31 +32,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    @Autowired
+    private JwtProvider jwtProvider;
+
     @Override
     public User addUser(User user) {
-        User user1=new User();
-        user1.setRole(user.getRole());
-        user1.setPassword("abc123");
-        user1.setPasswordSet(false);
-        user1.setUserId(user.getUserId());
-        User savedUser=userRepository.save(user1);
-        switch (user.getRole()) {
-            case STUDENT -> {
-                Student student = new Student();
-                student.setUser(savedUser);
-                student.setStudentId(user.getUserId());
-                studentRepository.save(student);
-            }
-            case TEACHER -> {
-                Teacher teacher = new Teacher();
-                teacher.setUser(savedUser);
-                teacher.setId(user.getUserId());
-                teacherRepository.save(teacher);
-            }
-        }
-
+        user.setPasswordSet(false);
+        User savedUser=userRepository.save(user);
         return savedUser;
     }
+
+
 
     @Override
     public Course addCourse(Course course) {
@@ -74,16 +61,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserId(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(
-                user.getUserId(),
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
-        );
-
+    public User findUserByJwt(String token) {
+         String userId=jwtProvider.generateUserIdFromToken(token);
+         User user=userRepository.findByUserId(userId);
+         return user;
     }
+
+    @Override
+    public User findUserByUserId(String userId) {
+        User user=userRepository.findByUserId(userId);
+        return  user;
+    }
+
+
 }

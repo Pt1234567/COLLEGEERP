@@ -11,13 +11,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Role role;
-
     //use teacher email for login
     // use student roll no for login
     private String userId;
 
     private String password;
+
+    private Role role;
 
     private boolean isPasswordSet;
 

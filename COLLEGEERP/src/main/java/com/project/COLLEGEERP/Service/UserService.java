@@ -8,4 +8,8 @@ public interface UserService {
     User addUser(User user);
     Course addCourse(Course course);
     Department addDepartment(Department department);
+
+    User findUserByJwt(String token);
+
+    User findUserByUserId(String userId);
 }
