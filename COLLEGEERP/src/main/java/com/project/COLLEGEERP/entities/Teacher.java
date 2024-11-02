@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -13,7 +14,7 @@ import java.util.List;
 public class Teacher
 {
     @Id
-    private String id;
+    private String teacherId;
 
     private String name;
 
@@ -21,6 +22,8 @@ public class Teacher
     private String email;
 
     private Gender gender;
+
+    private Date dob;
 
     @ManyToOne
     @JoinColumn(name = "dept_id")
@@ -31,6 +34,6 @@ public class Teacher
 
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private User user;
 }

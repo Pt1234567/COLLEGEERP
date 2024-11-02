@@ -1,13 +1,11 @@
 package com.project.COLLEGEERP.Service.Impl;
 
 import com.project.COLLEGEERP.Service.TeacherService;
-import com.project.COLLEGEERP.entities.Attendance;
-import com.project.COLLEGEERP.entities.Course;
-import com.project.COLLEGEERP.entities.Student;
-import com.project.COLLEGEERP.entities.StudentDto;
+import com.project.COLLEGEERP.entities.*;
 import com.project.COLLEGEERP.repository.AttendanceRepository;
 import com.project.COLLEGEERP.repository.CourseRepository;
 import com.project.COLLEGEERP.repository.StudentRepository;
+import com.project.COLLEGEERP.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +24,11 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+
 
     @Override
     public List<StudentDto> getStudentByCourse(String courseId) {
@@ -65,5 +68,10 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public void setMarks(String studentId, String courseId) {
 
+    }
+
+    @Override
+    public Teacher saveTeacher(Teacher teacher) {
+        return teacherRepository.save(teacher);
     }
 }

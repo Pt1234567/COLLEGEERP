@@ -17,13 +17,6 @@ public class Course {
 
     private String courseShortName;
 
-    @ManyToMany(mappedBy = "courses")
-    private List<Student> studentList=new ArrayList<>();
-
-    @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
-
     @ManyToOne
     @JoinColumn(name = "dept_id")
     private Department department;

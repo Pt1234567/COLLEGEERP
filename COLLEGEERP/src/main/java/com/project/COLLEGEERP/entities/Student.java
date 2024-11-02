@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,22 +20,11 @@ public class Student {
 
     private String studentEmail;
 
-    private int sem;
-
     @Enumerated(EnumType.STRING)
     private Gender studentGender;
 
-    @ManyToOne
-    @JoinColumn(name = "dept_id")
-    private Department department;
+    private Date dob;
 
-    @ManyToMany
-    @JoinTable(
-            name = "student_courses",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    private List<Course> courses=new ArrayList<>();
 
     @OneToMany(mappedBy = "student")
     private List<Marks> marksList=new ArrayList<>();
@@ -44,6 +34,11 @@ public class Student {
 
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private User user;
+
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Class classId;
 }

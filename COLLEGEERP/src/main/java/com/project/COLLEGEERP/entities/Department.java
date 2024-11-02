@@ -14,14 +14,16 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String deptName;
 
-    @OneToMany(mappedBy = "department")
-    private List<Student> studentList=new ArrayList<>();
 
     @OneToMany(mappedBy = "department")
     private List<Teacher> teacherList=new ArrayList<>();
 
     @OneToMany(mappedBy = "department")
     private List<Course> courses=new ArrayList<>();
+
+    @OneToMany(mappedBy = "department")
+    private List<Class> classList = new ArrayList<>();
 }

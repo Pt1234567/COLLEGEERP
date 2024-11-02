@@ -9,17 +9,13 @@ import lombok.Data;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
-    //use teacher email for login
-    // use student roll no for login
-    private String userId;
+    private String UserName;
 
     private String password;
 
     private Role role;
-
-    private boolean isPasswordSet;
 
     @OneToOne(mappedBy = "user" ,cascade = CascadeType.ALL)
     private Student student;
