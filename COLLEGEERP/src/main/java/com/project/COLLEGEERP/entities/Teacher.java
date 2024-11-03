@@ -5,9 +5,7 @@ import com.project.COLLEGEERP.helper.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Data
@@ -36,4 +34,7 @@ public class Teacher
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private User user;
+
+    @OneToMany(mappedBy = "teacher")
+    private Set<Assign> assignSet=new HashSet<>();
 }

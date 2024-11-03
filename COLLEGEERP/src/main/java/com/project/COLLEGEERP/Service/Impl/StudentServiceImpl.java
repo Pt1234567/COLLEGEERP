@@ -15,4 +15,9 @@ public class StudentServiceImpl implements StudentService {
     public Student saveStudent(Student student) {
         return studentRepository.save(student);
     }
+
+    @Override
+    public Student getStudentById(String studentId) {
+        return studentRepository.findById(studentId).orElseThrow(()->new RuntimeException("Student Not found"));
+    }
 }

@@ -30,19 +30,7 @@ public class TeacherServiceImpl implements TeacherService {
 
 
 
-    @Override
-    public List<StudentDto> getStudentByCourse(String courseId) {
-        Course course=courseRepository.findById(courseId).orElseThrow(()->new RuntimeException("No course found"));
-        List<Student> studentList=course.getStudentList();
-        List<StudentDto> studentDtoList=new ArrayList<>();
-        for(Student s:studentList){
-            StudentDto studentDto=new StudentDto();
-            studentDto.setStudentId(s.getStudentId());
-            studentDto.setStudentName(s.getStudentName());
-            studentDtoList.add(studentDto);
-        }
-        return studentDtoList;
-    }
+
 
     @Override
     public void markAttendance(String studentId, String courseId,boolean isPresent) {
@@ -74,4 +62,11 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher saveTeacher(Teacher teacher) {
         return teacherRepository.save(teacher);
     }
+
+    @Override
+    public Teacher getTeacherById(String teacherId) {
+        return teacherRepository.findById(teacherId).orElseThrow(()->new RuntimeException("Teacher Not found"));
+    }
+
+
 }

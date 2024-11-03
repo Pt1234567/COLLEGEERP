@@ -34,11 +34,11 @@ public class JwtProvider {
         return jwts;
     }
 
-    public String generateUserIdFromToken(String token){
+    public String generateUserNameFromToken(String token){
         token=token.substring(7);
         Claims claims=Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        String userId=String.valueOf(claims.get("userId"));
-        return userId;
+        String userName=String.valueOf(claims.get("userId"));
+        return userName;
     }
 
     private static String populateAuthorities(Collection<? extends  GrantedAuthority> authorities){

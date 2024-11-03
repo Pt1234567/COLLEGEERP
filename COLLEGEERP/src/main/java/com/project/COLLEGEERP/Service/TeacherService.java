@@ -8,12 +8,14 @@ import java.util.List;
 
 public interface TeacherService {
 
-     List<StudentDto> getStudentByCourse(String courseId);
+
 
      void markAttendance(String studentId,String courseId,boolean isPresent);
 
      void setMarks(String studentId,String courseId);
 
      Teacher saveTeacher(Teacher teacher);
+
+     Teacher getTeacherById(String teacherId);
 
 }

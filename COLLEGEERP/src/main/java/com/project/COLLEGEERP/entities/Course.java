@@ -15,8 +15,6 @@ public class Course {
 
     private String courseName;
 
-    private String courseShortName;
-
     @ManyToOne
     @JoinColumn(name = "dept_id")
     private Department department;

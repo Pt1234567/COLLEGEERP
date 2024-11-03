@@ -1,7 +1,7 @@
 package com.project.COLLEGEERP.controller;
 
 import com.project.COLLEGEERP.Service.Impl.CustomUserDetailsService;
-import com.project.COLLEGEERP.Service.UserService;
+import com.project.COLLEGEERP.Service.AdminService;
 import com.project.COLLEGEERP.config.JwtProvider;
 import com.project.COLLEGEERP.config.SecurityConfig;
 import com.project.COLLEGEERP.entities.User;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
       @Autowired
-      private UserService userService;
+      private AdminService adminService;
 
       @Autowired
       private CustomUserDetailsService customUserDetailsService;
@@ -32,45 +32,19 @@ public class AuthController {
       @Autowired
       private SecurityConfig securityConfig;
 
-      @PostMapping("/signUp")
-      public ResponseEntity<AuthResponse> resgister(@RequestBody User user){
-         String userId= user.getUserId();
-         String userPassword=user.getPassword();
 
-         User user1=userService.findUserByUserId(userId);
-         user1.setPassword(securityConfig.passwordEncoder().encode(userPassword));
-         user1.setPasswordSet(true);
-
-         User savedUser=userService.addUser(user1);
-
-          Authentication authentication=new UsernamePasswordAuthenticationToken(
-                user1.getUserId(),
-                  user1.getPassword()
-          );
-
-          SecurityContextHolder.getContext().setAuthentication(authentication);
-
-          String jwt= JwtProvider.generateToken(authentication);
-          AuthResponse authResponse=new AuthResponse();
-          authResponse.setJwt(jwt);
-          authResponse.setMessage("Register Successfull");
-          authResponse.setPasswordSet(true);
-
-          return new ResponseEntity<>(authResponse,HttpStatus.CREATED);
-
-      }
 
 
       @PostMapping("/signIn")
       public ResponseEntity<AuthResponse> login(@RequestBody User user){
-          String userId= user.getUserId();
+          String userName= user.getUserName();
           String userPassword=user.getPassword();
 
-          Authentication authentication=authenicate(userId,userPassword);
+          Authentication authentication=authenicate(userName,userPassword);
           SecurityContextHolder.getContext().setAuthentication(authentication);
           String jwt=JwtProvider.generateToken(authentication);
 
-          User authUser=userService.findUserByUserId(userId);
+          User authUser=adminService.findUserByUserName(userName);
 
           AuthResponse authResponse=new AuthResponse();
           authResponse.setJwt(jwt);
@@ -80,9 +54,9 @@ public class AuthController {
           return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
       }
 
-    private Authentication authenicate(String userId,String password){
+    private Authentication authenicate(String userName,String password){
 
-        UserDetails userDetails= customUserDetailsService.loadUserByUsername(userId);
+        UserDetails userDetails= customUserDetailsService.loadUserByUsername(userName);
 
         if(userDetails==null){
             throw  new BadCredentialsException("Invalid");

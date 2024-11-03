@@ -4,4 +4,5 @@ import com.project.COLLEGEERP.entities.Student;
 
 public interface StudentService {
     Student saveStudent(Student student);
+    Student getStudentById(String studentId);
 }

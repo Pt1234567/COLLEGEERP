@@ -1,18 +1,18 @@
 package com.project.COLLEGEERP.controller;
 
 import com.project.COLLEGEERP.Service.StudentService;
-import com.project.COLLEGEERP.Service.UserService;
+import com.project.COLLEGEERP.Service.TeacherService;
+import com.project.COLLEGEERP.Service.AdminService;
 import com.project.COLLEGEERP.config.SecurityConfig;
 import com.project.COLLEGEERP.entities.*;
 import com.project.COLLEGEERP.entities.Class;
 import com.project.COLLEGEERP.helper.Gender;
 import com.project.COLLEGEERP.helper.Role;
-import com.project.COLLEGEERP.repository.ClassRepository;
 import com.project.COLLEGEERP.repository.StudentRepository;
-import com.project.COLLEGEERP.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +25,7 @@ import java.util.Date;
 public class AdminController {
 
     @Autowired
-     private UserService userService;
+     private AdminService adminService;
 
     @Autowired
     private StudentService studentService;
@@ -34,7 +34,7 @@ public class AdminController {
     private StudentRepository studentRepository;
 
     @Autowired
-    private TeacherRepository teacherRepository;
+    private TeacherService teacherService;
 
     @Autowired
     private SecurityConfig securityConfig;
@@ -42,6 +42,7 @@ public class AdminController {
 
 
     @PostMapping("/addStudent")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addStudent(
             @RequestParam  String classId,
             @RequestParam  String studentName,
@@ -49,7 +50,7 @@ public class AdminController {
             @RequestParam  String dob,
             @RequestParam  String gender
     ){
-             Class classEntity= userService.getClassByClassId(classId);
+             Class classEntity= adminService.getClassByClassId(classId);
              if(classEntity==null){
                  return new ResponseEntity<>("Class Not found", HttpStatus.NOT_FOUND);
              }
@@ -63,7 +64,7 @@ public class AdminController {
               user.setUserName(username);
               user.setPassword(securityConfig.passwordEncoder().encode(password));
               user.setRole(Role.STUDENT);
-              User savedUser=userService.saveUser(user);
+              User savedUser= adminService.saveUser(user);
 
               Date dateOfBirth=java.sql.Date.valueOf(dob);//convert string to date
               Gender g=((gender.equals("Male"))?Gender.MALE:Gender.FEMALE);
@@ -81,15 +82,17 @@ public class AdminController {
               return new ResponseEntity<>("Student Saved",HttpStatus.CREATED);
     }
 
+    @PostMapping("/addTeacher")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addTeacher(
             @RequestParam String id,
             @RequestParam String name,
             @RequestParam String dob,
             @RequestParam String gender,
-            @RequestParam String deptName
+            @RequestParam String deptId
     ){
 
-        Department department=userService.getDepartmentByDeptName(deptName);
+        Department department= adminService.getDepartmentById(deptId);
 
         //create username and password
         String username=name.split(" ")[0].toLowerCase()+'_'+id;
@@ -99,7 +102,7 @@ public class AdminController {
         user.setRole(Role.TEACHER);
         user.setUserName(username);
         user.setPassword(securityConfig.passwordEncoder().encode(password));
-        User savedUser=userService.saveUser(user);
+        User savedUser= adminService.saveUser(user);
 
         Date dateOfBirth=java.sql.Date.valueOf(dob);//convert string to date
         Gender g=((gender.equals("Male"))?Gender.MALE:Gender.FEMALE);
@@ -112,8 +115,80 @@ public class AdminController {
         teacher.setDob(dateOfBirth);
         teacher.setDepartment(department);
         teacher.setName(name);
-        teacherRepository.save(teacher);
+        teacherService.saveTeacher(teacher);
         return new ResponseEntity<>("Teacher added",HttpStatus.CREATED);
+    }
+
+    @PostMapping("/addClass")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> addClass(
+            @RequestParam String classId,
+            @RequestParam String sem,
+            @RequestParam String deptId
+    ){
+       Department department= adminService.getDepartmentById(deptId);
+
+       Class classEntity=new Class();
+       classEntity.setId(classId);
+       classEntity.setDepartment(department);
+       classEntity.setSem(Integer.parseInt(sem));
+       adminService.saveClassEntity(classEntity);
+
+       return new ResponseEntity<>("Class added",HttpStatus.CREATED);
+    }
+
+    @PostMapping("/assign")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Assign> assignToCourseAndRespectiveTeacher(
+            @RequestParam String classId,
+            @RequestParam String courseId,
+            @RequestParam String teacherId
+    ){
+         Class classEntity= adminService.getClassByClassId(classId);
+         Course course= adminService.getCourseById(courseId);
+         Teacher teacher=teacherService.getTeacherById(teacherId);
+
+         Assign assign=new Assign();
+        // assign teacher to course and class
+        assign.setCourse(course);
+        assign.setTeacher(teacher);
+        assign.setClassId(classEntity);
+        Assign assigned=adminService.saveAssign(assign);
+
+        return new ResponseEntity<>(assigned,HttpStatus.CREATED);
+    }
+
+    @PostMapping("/addCourse")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Course> addCourse(
+            @RequestParam String courseId,
+            @RequestParam String courseName,
+            @RequestParam String deptId
+    ){
+
+         Department department=adminService.getDepartmentById(deptId);
+         Course course=new Course();
+         course.setCourseId(courseId);
+         course.setCourseName(courseName);
+         course.setDepartment(department);
+
+         Course savedCourse=adminService.saveCourse(course);
+         return new ResponseEntity<>(savedCourse,HttpStatus.CREATED);
+    }
+
+    @PostMapping("/addDepartment")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Department> addDepartment(
+            @RequestParam String deptId,
+            @RequestParam String deptName
+    ){
+            Department department=new Department();
+            department.setDeptName(deptName);
+            department.setId(deptId);
+
+            Department savedDepartment=adminService.saveDepartment(department);
+
+            return new ResponseEntity<>(savedDepartment,HttpStatus.CREATED);
     }
 
 }
