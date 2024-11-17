@@ -27,14 +27,8 @@ public class Teacher
     @JoinColumn(name = "dept_id")
     private Department department;
 
-    @OneToMany(mappedBy = "teacher")
-    private List<Course> courses=new ArrayList<>();
-
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private User user;
-
-    @OneToMany(mappedBy = "teacher")
-    private Set<Assign> assignSet=new HashSet<>();
 }

@@ -47,11 +47,11 @@ public class TeacherController {
     }
 
     @GetMapping("/{classId}/{courseId}/attendance")
-    public ResponseEntity<Set<Student>> getStudentsForClassAndCourse(
+    public ResponseEntity<List<Student>> getStudentsForClassAndCourse(
             @PathVariable String classId,
             @PathVariable String courseId) {
         Class classEntity=adminService.getClassByClassId(classId);
-        Set<Student> students = classEntity.getStudentList();
+        List<Student> students = classEntity.getStudentList();
         return ResponseEntity.ok(students);
     }
 

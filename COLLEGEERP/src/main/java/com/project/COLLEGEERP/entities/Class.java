@@ -22,6 +22,6 @@ public class Class {
     private Department department;
 
     @OneToMany(mappedBy = "classId")
-    private Set<Student> studentList=new HashSet<>();
+    private List<Student> studentList=new ArrayList<>();
 
 }
