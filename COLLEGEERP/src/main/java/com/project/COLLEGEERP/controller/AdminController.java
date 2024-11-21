@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 @RestController
@@ -41,8 +41,8 @@ public class AdminController {
 
 
 
-    @PostMapping("/addStudent")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/addStudent")
     public ResponseEntity<String> addStudent(
             @RequestParam  String classId,
             @RequestParam  String studentName,
@@ -63,7 +63,7 @@ public class AdminController {
               User user=new User();
               user.setUserName(username);
               user.setPassword(securityConfig.passwordEncoder().encode(password));
-              user.setRole(Role.STUDENT);
+              user.setRole(Role.ROLE_STUDENT);
               User savedUser= adminService.saveUser(user);
 
               Date dateOfBirth=java.sql.Date.valueOf(dob);//convert string to date
@@ -82,45 +82,40 @@ public class AdminController {
               return new ResponseEntity<>("Student Saved",HttpStatus.CREATED);
     }
 
-    @PostMapping("/addTeacher")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/addTeacher")
     public ResponseEntity<String> addTeacher(
-            @RequestParam String id,
-            @RequestParam String name,
-            @RequestParam String dob,
-            @RequestParam String gender,
-            @RequestParam String deptId
-    ){
-
-        Department department= adminService.getDepartmentById(deptId);
-
+            @RequestBody TeacherDto teacherDto
+    ) throws ParseException {
         //create username and password
-        String username=name.split(" ")[0].toLowerCase()+'_'+id;
-        String password=name.split(" ")[0].toLowerCase()+'_'+dob.split("-")[0];
+        String username= teacherDto.getName().split(" ")[0].toLowerCase()+'_'+teacherDto.getTeacherId();
+        String password= teacherDto.getName().split(" ")[0].toLowerCase()+'_'+teacherDto.getDob().toString().split("-")[0];
 
         User user=new User();
-        user.setRole(Role.TEACHER);
+        user.setRole(Role.ROLE_TEACHER);
         user.setUserName(username);
         user.setPassword(securityConfig.passwordEncoder().encode(password));
         User savedUser= adminService.saveUser(user);
 
-        Date dateOfBirth=java.sql.Date.valueOf(dob);//convert string to date
-        Gender g=((gender.equals("Male"))?Gender.MALE:Gender.FEMALE);
-
         //create teacher
-        Teacher teacher=new Teacher();
-        teacher.setTeacherId(id);
-        teacher.setUser(savedUser);
-        teacher.setGender(g);
-        teacher.setDob(dateOfBirth);
-        teacher.setDepartment(department);
-        teacher.setName(name);
-        teacherService.saveTeacher(teacher);
+        Teacher t1=new Teacher();
+        t1.setUser(savedUser);
+        t1.setTeacherId(teacherDto.getTeacherId());
+        t1.setName(teacherDto.getName());
+        t1.setGender(teacherDto.getGender().equalsIgnoreCase("MALE") ? Gender.MALE : Gender.FEMALE);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Define format
+        Date dobDate = sdf.parse(teacherDto.getDob()); // Parse string to Date
+        t1.setDob(dobDate);
+        t1.setEmail(teacherDto.getEmail());
+        Department department=adminService.getDepartmentById(teacherDto.getDeptId());
+        t1.setDepartment(department);
+        teacherService.saveTeacher(t1);
+
         return new ResponseEntity<>("Teacher added",HttpStatus.CREATED);
     }
 
-    @PostMapping("/addClass")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/addClass")
     public ResponseEntity<String> addClass(
             @RequestParam String classId,
             @RequestParam String sem,
@@ -137,8 +132,8 @@ public class AdminController {
        return new ResponseEntity<>("Class added",HttpStatus.CREATED);
     }
 
-    @PostMapping("/assign")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/assign")
     public ResponseEntity<Assign> assignToCourseAndRespectiveTeacher(
             @RequestParam String classId,
             @RequestParam String courseId,
@@ -158,33 +153,25 @@ public class AdminController {
         return new ResponseEntity<>(assigned,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")// Use 'ADMIN' (without 'ROLE_') since Spring Security adds the prefix internally
     @PostMapping("/addCourse")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Course> addCourse(
-            @RequestParam String courseId,
-            @RequestParam String courseName,
-            @RequestParam String deptId
+            @RequestBody CourseDto courseDto
     ){
-
-         Department department=adminService.getDepartmentById(deptId);
+         Department department=adminService.getDepartmentById(courseDto.getDeptId());
          Course course=new Course();
-         course.setCourseId(courseId);
-         course.setCourseName(courseName);
+         course.setCourseId(courseDto.getCourseId());
+         course.setCourseName(courseDto.getCourseName());
          course.setDepartment(department);
 
          Course savedCourse=adminService.saveCourse(course);
          return new ResponseEntity<>(savedCourse,HttpStatus.CREATED);
     }
-
-    @PostMapping("/addDepartment")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/addDepartment")
     public ResponseEntity<Department> addDepartment(
-            @RequestParam String deptId,
-            @RequestParam String deptName
+            @RequestBody Department department
     ){
-            Department department=new Department();
-            department.setDeptName(deptName);
-            department.setId(deptId);
 
             Department savedDepartment=adminService.saveDepartment(department);
 

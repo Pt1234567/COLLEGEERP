@@ -5,6 +5,7 @@ import com.project.COLLEGEERP.Service.AdminService;
 import com.project.COLLEGEERP.config.JwtProvider;
 import com.project.COLLEGEERP.config.SecurityConfig;
 import com.project.COLLEGEERP.entities.User;
+import com.project.COLLEGEERP.entities.UserCredentials;
 import com.project.COLLEGEERP.response.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
       @Autowired
@@ -35,10 +36,12 @@ public class AuthController {
 
 
 
+
+
       @PostMapping("/signIn")
-      public ResponseEntity<AuthResponse> login(@RequestBody User user){
-          String userName= user.getUserName();
-          String userPassword=user.getPassword();
+      public ResponseEntity<AuthResponse> login(@RequestBody UserCredentials userCredentials){
+          String userName= userCredentials.getUsername();
+          String userPassword=userCredentials.getPassword();
 
           Authentication authentication=authenicate(userName,userPassword);
           SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -61,8 +64,8 @@ public class AuthController {
         if(userDetails==null){
             throw  new BadCredentialsException("Invalid");
         }
-        if(!password.equals(userDetails.getPassword())){
-            throw  new BadCredentialsException("Invalid password");
+        if (!securityConfig.passwordEncoder().matches(password, userDetails.getPassword())) {
+            throw new BadCredentialsException("Invalid username or password");
         }
 
         return new UsernamePasswordAuthenticationToken(userDetails,password,userDetails.getAuthorities());

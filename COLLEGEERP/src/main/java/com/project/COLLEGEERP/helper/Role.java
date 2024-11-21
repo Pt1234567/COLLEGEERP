@@ -1,6 +1,7 @@
 package com.project.COLLEGEERP.helper;
 
-
 public enum Role {
-    TEACHER,ADMIN,STUDENT;
+    ROLE_TEACHER,
+    ROLE_ADMIN,
+    ROLE_STUDENT;
 }

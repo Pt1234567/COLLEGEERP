@@ -3,8 +3,8 @@ package com.project.COLLEGEERP.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
 @Data
+@Entity
 public class Assign {
 
     @Id

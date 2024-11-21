@@ -1,5 +1,6 @@
 package com.project.COLLEGEERP.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,6 +18,7 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "dept_id")
+    @JsonIgnore
     private Department department;
 
     @OneToMany(mappedBy = "course",cascade = CascadeType.ALL, fetch = FetchType.LAZY)

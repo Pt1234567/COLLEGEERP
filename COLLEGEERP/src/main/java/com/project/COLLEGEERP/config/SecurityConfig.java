@@ -43,10 +43,13 @@ public class SecurityConfig{
             httpSecurity
                     .csrf(csrf->csrf.disable())
                     .authorizeHttpRequests(authorize->
-                            authorize.requestMatchers("/admin/**").hasRole("ADMIN")
-                                    .requestMatchers("/student/**").hasRole("STUDENT")
+                            authorize.requestMatchers(
+                                            "/auth/signIn").permitAll()
+                                    .requestMatchers("/admin/**").hasRole("ADMIN") // "ADMIN" automatically maps to "ROLE_ADMIN"
                                     .requestMatchers("/teacher/**").hasRole("TEACHER")
-                                    .anyRequest().authenticated())
+                                    .requestMatchers("/student/**").hasRole("STUDENT")
+                                    .anyRequest().authenticated()
+                    )
                     .sessionManagement((sessionManagement)->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class);
             return httpSecurity.build();

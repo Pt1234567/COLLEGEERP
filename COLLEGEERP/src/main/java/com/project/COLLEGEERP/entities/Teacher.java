@@ -5,6 +5,7 @@ import com.project.COLLEGEERP.helper.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Entity
@@ -19,10 +20,16 @@ public class Teacher
     @Column(unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
+
+    @Temporal(TemporalType.DATE) // This annotation is used to map a Date type to SQL DATE
+    @Column(name = "dob")
     private Date dob;
 
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "dept_id")
     private Department department;
