@@ -31,6 +31,7 @@ public class TeacherController {
     @Autowired
     private AssignService assignService;
 
+    @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/select")
     public ResponseEntity<Map<String, List<?>>> getClassesAndCourses(@RequestHeader("Authorization")String jwt) {
         User user=adminService.findUserByJwt(jwt);
@@ -46,6 +47,7 @@ public class TeacherController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/{classId}/{courseId}/attendance")
     public ResponseEntity<List<Student>> getStudentsForClassAndCourse(
             @PathVariable String classId,
@@ -55,6 +57,7 @@ public class TeacherController {
         return ResponseEntity.ok(students);
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/{classId}/{courseId}/attendance")
     public ResponseEntity<AttendanceResponse> markAttendance(
             @RequestBody  Map<String, String> attendanceData,

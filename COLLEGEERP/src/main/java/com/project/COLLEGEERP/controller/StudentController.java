@@ -6,6 +6,8 @@ import com.project.COLLEGEERP.Service.AttendanceService;
 import com.project.COLLEGEERP.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,8 @@ public class StudentController {
     @Autowired
     private AttendanceService attendanceService;
 
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/getAttendance")
     public ResponseEntity<List<AttendanceDto>> attendance(@RequestHeader("Authorization")String jwt){
 
         User user=adminService.findUserByJwt(jwt);
@@ -35,7 +39,9 @@ public class StudentController {
         List<AttendanceDto> attendanceDtos=new ArrayList<>();
 
         for(Assign ass:assignList){
+            System.out.println(student.getStudentId()+" "+ass.getCourse().getCourseId());
             Attendance att=attendanceService.getByStudentIdAndCourseId(student.getStudentId(),ass.getCourse().getCourseId());
+            if(att==null) continue;
             AttendanceDto attendanceDto=new AttendanceDto();
             attendanceDto.setCourseId(att.getCourse().getCourseId());
             attendanceDto.setCourseName(att.getCourse().getCourseName());

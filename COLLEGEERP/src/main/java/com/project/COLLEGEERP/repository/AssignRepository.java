@@ -11,5 +11,7 @@ public interface AssignRepository extends JpaRepository<Assign,Long> {
     List<Course> findCourseByTeacher_TeacherId(String teacherId);
     List<Class> findClassIdByTeacher_TeacherId(String teacherId);
 
-    List<Assign> findAssignByClassId_Id(String classId);
+    List<Assign> findByClassId_Id(String classId);
+
+    Assign findByClassId_IdAndCourse_CourseIdAndTeacher_TeacherId(String classId,String courseId,String teacherId);
 }

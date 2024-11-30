@@ -1,5 +1,8 @@
 package com.project.COLLEGEERP.controller;
 
+import com.project.COLLEGEERP.Dto.AssignDto;
+import com.project.COLLEGEERP.Dto.ClassDto;
+import com.project.COLLEGEERP.Dto.StudentDTO;
 import com.project.COLLEGEERP.Service.StudentService;
 import com.project.COLLEGEERP.Service.TeacherService;
 import com.project.COLLEGEERP.Service.AdminService;
@@ -8,6 +11,7 @@ import com.project.COLLEGEERP.entities.*;
 import com.project.COLLEGEERP.entities.Class;
 import com.project.COLLEGEERP.helper.Gender;
 import com.project.COLLEGEERP.helper.Role;
+import com.project.COLLEGEERP.repository.AssignRepository;
 import com.project.COLLEGEERP.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,25 +43,24 @@ public class AdminController {
     @Autowired
     private SecurityConfig securityConfig;
 
+    @Autowired
+    private AssignRepository assignRepository;
+
 
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addStudent")
     public ResponseEntity<String> addStudent(
-            @RequestParam  String classId,
-            @RequestParam  String studentName,
-            @RequestParam  String studentId,
-            @RequestParam  String dob,
-            @RequestParam  String gender
-    ){
-             Class classEntity= adminService.getClassByClassId(classId);
+            @RequestBody StudentDTO studentDTO
+            ) throws ParseException {
+             Class classEntity= adminService.getClassByClassId(studentDTO.getClassId());
              if(classEntity==null){
                  return new ResponseEntity<>("Class Not found", HttpStatus.NOT_FOUND);
              }
 
              //create username and password
-             String username=studentName.split(" ")[0].toLowerCase()+'_'+studentId.substring(studentId.length()-3);
-             String password=studentName.split(" ")[0].toLowerCase()+'_'+dob.split("-")[0];
+             String username=studentDTO.getStudentName().split(" ")[0].toLowerCase()+'_'+studentDTO.getStudentId().substring(studentDTO.getStudentId().length()-3);
+             String password=studentDTO.getStudentName().split(" ")[0].toLowerCase()+'_'+studentDTO.getDob().split("-")[0];
 
              //create a user for student
               User user=new User();
@@ -66,16 +69,16 @@ public class AdminController {
               user.setRole(Role.ROLE_STUDENT);
               User savedUser= adminService.saveUser(user);
 
-              Date dateOfBirth=java.sql.Date.valueOf(dob);//convert string to date
-              Gender g=((gender.equals("Male"))?Gender.MALE:Gender.FEMALE);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Define format
+                Date dobDate = sdf.parse(studentDTO.getDob()); // Parse string to Date
 
               //creating stduent
               Student student=new Student();
               student.setUser(savedUser);
-              student.setStudentId(studentId);
-              student.setStudentName(studentName);
-              student.setDob(dateOfBirth);
-              student.setStudentGender(g);
+              student.setStudentId(studentDTO.getStudentId());
+              student.setStudentName(studentDTO.getStudentName());
+              student.setDob(dobDate);
+              student.setStudentGender(studentDTO.getGender().equals("MALE") ? Gender.MALE : Gender.FEMALE);
               student.setClassId(classEntity);
 
               studentService.saveStudent(student);
@@ -102,7 +105,7 @@ public class AdminController {
         t1.setUser(savedUser);
         t1.setTeacherId(teacherDto.getTeacherId());
         t1.setName(teacherDto.getName());
-        t1.setGender(teacherDto.getGender().equalsIgnoreCase("MALE") ? Gender.MALE : Gender.FEMALE);
+        t1.setGender(teacherDto.getGender().equals("MALE") ? Gender.MALE : Gender.FEMALE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Define format
         Date dobDate = sdf.parse(teacherDto.getDob()); // Parse string to Date
         t1.setDob(dobDate);
@@ -117,16 +120,14 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addClass")
     public ResponseEntity<String> addClass(
-            @RequestParam String classId,
-            @RequestParam String sem,
-            @RequestParam String deptId
+            @RequestBody ClassDto classDto
     ){
-       Department department= adminService.getDepartmentById(deptId);
+       Department department= adminService.getDepartmentById(classDto.getDeptId());
 
        Class classEntity=new Class();
-       classEntity.setId(classId);
+       classEntity.setId(classDto.getClassId());
        classEntity.setDepartment(department);
-       classEntity.setSem(Integer.parseInt(sem));
+       classEntity.setSem(classDto.getSem());
        adminService.saveClassEntity(classEntity);
 
        return new ResponseEntity<>("Class added",HttpStatus.CREATED);
@@ -135,15 +136,14 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/assign")
     public ResponseEntity<Assign> assignToCourseAndRespectiveTeacher(
-            @RequestParam String classId,
-            @RequestParam String courseId,
-            @RequestParam String teacherId
-    ){
-         Class classEntity= adminService.getClassByClassId(classId);
-         Course course= adminService.getCourseById(courseId);
-         Teacher teacher=teacherService.getTeacherById(teacherId);
+            @RequestBody AssignDto assignDto
+            ){
+         Class classEntity= adminService.getClassByClassId(assignDto.getClassId());
+         Course course= adminService.getCourseById(assignDto.getCourseId());
+         Teacher teacher=teacherService.getTeacherById(assignDto.getTeacherId());
 
-         Assign assign=new Assign();
+         Assign assign=assignRepository.findByClassId_IdAndCourse_CourseIdAndTeacher_TeacherId(classEntity.getId(), course.getCourseId(),teacher.getTeacherId());
+         if(assign==null)assign=new Assign();
         // assign teacher to course and class
         assign.setCourse(course);
         assign.setTeacher(teacher);

@@ -28,6 +28,6 @@ public class AssignServiceImpl implements AssignService {
 
     @Override
     public List<Assign> getAllAssignedByClassId(String classId) {
-       return assignRepository.findAssignByClassId_Id(classId);
+       return assignRepository.findByClassId_Id(classId);
     }
 }
