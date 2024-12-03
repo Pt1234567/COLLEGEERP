@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
@@ -42,6 +44,7 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
             httpSecurity
                     .csrf(csrf->csrf.disable())
+                    .cors(cors->cors.configurationSource(corsConfigurationSource()))
                     .authorizeHttpRequests(authorize->
                             authorize.requestMatchers(
                                             "/auth/signIn").permitAll()
@@ -53,6 +56,15 @@ public class SecurityConfig{
                     .sessionManagement((sessionManagement)->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class);
             return httpSecurity.build();
+    }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");  // Frontend React URL
+        configuration.addAllowedMethod("*");  // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+        configuration.addAllowedHeader("*");  // Allow all headers
+        configuration.setAllowCredentials(true);  // Allow cookies/credentials if needed
+        return request -> configuration;  // Return the CORS configuration for all requests
     }
 
 }

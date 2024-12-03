@@ -7,5 +7,6 @@ public class AuthResponse {
     private String jwt;
     private String message;
     private boolean isPasswordSet;
+    private String role;
     private String session;
 }

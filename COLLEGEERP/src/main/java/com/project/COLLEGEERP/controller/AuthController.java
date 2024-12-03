@@ -34,10 +34,6 @@ public class AuthController {
       private SecurityConfig securityConfig;
 
 
-
-
-
-
       @PostMapping("/signIn")
       public ResponseEntity<AuthResponse> login(@RequestBody UserCredentials userCredentials){
           String userName= userCredentials.getUsername();
@@ -51,6 +47,7 @@ public class AuthController {
 
           AuthResponse authResponse=new AuthResponse();
           authResponse.setJwt(jwt);
+          authResponse.setRole(authUser.getRole().toString());
           authResponse.setPasswordSet(true);
           authResponse.setMessage("Login Success");
 
