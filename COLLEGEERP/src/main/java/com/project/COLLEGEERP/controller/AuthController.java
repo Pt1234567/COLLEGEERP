@@ -50,7 +50,7 @@ public class AuthController {
           authResponse.setRole(authUser.getRole().toString());
           authResponse.setPasswordSet(true);
           authResponse.setMessage("Login Success");
-
+          authResponse.setUserName(userName);
           return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
       }
 

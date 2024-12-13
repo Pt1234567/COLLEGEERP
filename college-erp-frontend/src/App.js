@@ -4,7 +4,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar'; // Assuming you have a Navbar component
 import Homepage from './Pages/Homepage';
 import LoginPage from "./components/LoginPage";
-import Dashboard from "./components/Dashborad";
+import AdminDashboard from "./components/AdminDashboard";
+import AddClass from "./components/AddClass";
+import AddCourse from "./components/AddCourse";
+import AddDepartment from "./components/AddDepartment";
+import AddStudent from "./components/AddStudent";
+import AddTeacher from "./components/AddTeacher";
+import AssignCourse from "./components/AssignCourse";
+
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -24,7 +31,13 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<LoginPage setUser={setUser} />} />
-        <Route path="/dashboard" element={<Dashboard user={user} />} />
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        {/* <Route path="/admin/add-student" element={<AddStudent />} />
+        <Route path="/admin/add-teacher" element={<AddTeacher />} />
+        <Route path="/admin/add-class" element={<AddClass />} />
+        <Route path="/admin/add-course" element={<AddCourse />} />
+        <Route path="/admin/add-department" element={<AddDepartment />} />
+        <Route path="/admin/assign-course" element={<AssignCourse />} /> */}
       </Routes>
     </Router>
   );

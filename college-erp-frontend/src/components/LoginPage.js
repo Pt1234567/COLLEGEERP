@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = ({ setUser }) => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Create navigate function
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,13 +24,24 @@ const LoginPage = ({ setUser }) => {
 
     try {
       setIsLoading(true);
-      // Call your backend API for login
       const response = await axios.post("http://localhost:6060/auth/signIn", {
         username,
         password,
       });
-      setUser({ username }); // Successfully logged in, set the user state
-      navigate("/dashboard"); // Use navigate to redirect to the dashboard
+
+      const user = response.data; // Assume this contains username, role, and token
+      setUser(user); // Save user data to state
+
+      // Redirect based on role
+      if (user.role === "ROLE_ADMIN") {
+        navigate("/AdminDashboard");
+      } else if (user.role === "ROLE_STUDENT") {
+        navigate("/student-dashboard");
+      } else if (user.role === "ROLE_TEACHER") {
+        navigate("/teacher-dashboard");
+      } else {
+        setError("Role not recognized");
+      }
     } catch (err) {
       console.error("Login failed", err.response?.data || err.message);
       setError("Invalid credentials, please try again.");
