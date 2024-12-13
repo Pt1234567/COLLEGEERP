@@ -9,7 +9,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -60,11 +59,13 @@ public class SecurityConfig{
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");  // Frontend React URL
-        configuration.addAllowedMethod("*");  // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
-        configuration.addAllowedHeader("*");  // Allow all headers
-        configuration.setAllowCredentials(true);  // Allow cookies/credentials if needed
-        return request -> configuration;  // Return the CORS configuration for all requests
+        configuration.addAllowedOriginPattern("http://localhost:3000");  // React app URL
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);  // Allow credentials like cookies
+        System.out.println("CORS Configuration Applied");
+        return request -> configuration;  // Apply for all requests
     }
+
 
 }

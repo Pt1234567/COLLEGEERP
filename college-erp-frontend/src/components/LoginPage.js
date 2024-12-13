@@ -31,6 +31,7 @@ const LoginPage = ({ setUser }) => {
 
       const user = response.data; // Assume this contains username, role, and token
       setUser(user); // Save user data to state
+      
 
       // Redirect based on role
       if (user.role === "ROLE_ADMIN") {

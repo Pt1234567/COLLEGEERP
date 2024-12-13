@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AddDepartment = () => {
+const AssignTeacherToCourseAndClass = () => {
   const [formData, setFormData] = useState({
-    id: "",
-    deptName: "",
+    teacherId: "",
+    courseId: "",
+    classId: "",
   });
 
   const handleChange = (e) => {
@@ -13,8 +14,9 @@ const AddDepartment = () => {
 
   const resetForm = () => {
     setFormData({
-      id: "",
-      deptName: "",
+      teacherId: "",
+      courseId: "",
+      classId: "",
     });
   };
 
@@ -24,35 +26,44 @@ const AddDepartment = () => {
       const token = localStorage.getItem("jwt");
       if (!token) throw new Error("Token not found in localStorage.");
 
-      await axios.post("http://localhost:6060/admin/addDepartment", formData, {
+      await axios.post("http://localhost:6060/admin/assign", formData, {
         headers: { Authorization: "Bearer"+token },
       });
 
-      alert("Department added successfully!");
+      alert("Teacher assigned successfully!");
       resetForm();
     } catch (error) {
-      alert(error.response ? `Failed to add department: ${error.response.data}` : error.message);
+      alert(error.response ? `Failed to assign teacher: ${error.response.data}` : error.message);
     }
   };
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Add Department</h1>
+      <h1 className="text-2xl font-bold mb-4">Assign Teacher to Course and Class</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
-          name="id"
-          placeholder="Department ID"
-          value={formData.id}
+          name="teacherId"
+          placeholder="Teacher ID"
+          value={formData.teacherId}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded"
           required
         />
         <input
           type="text"
-          name="deptName"
-          placeholder="Department Name"
-          value={formData.deptName}
+          name="courseId"
+          placeholder="Course ID"
+          value={formData.courseId}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border rounded"
+          required
+        />
+        <input
+          type="text"
+          name="classId"
+          placeholder="Class ID"
+          value={formData.classId}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded"
           required
@@ -61,11 +72,11 @@ const AddDepartment = () => {
           type="submit"
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
         >
-          Add Department
+          Assign
         </button>
       </form>
     </div>
   );
 };
 
-export default AddDepartment;
+export default AssignTeacherToCourseAndClass;

@@ -172,7 +172,6 @@ public class AdminController {
     public ResponseEntity<Department> addDepartment(
             @RequestBody Department department
     ){
-
             Department savedDepartment=adminService.saveDepartment(department);
 
             return new ResponseEntity<>(savedDepartment,HttpStatus.CREATED);

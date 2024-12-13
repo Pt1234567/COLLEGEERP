@@ -8,9 +8,9 @@ import AdminDashboard from "./components/AdminDashboard";
 import AddClass from "./components/AddClass";
 import AddCourse from "./components/AddCourse";
 import AddDepartment from "./components/AddDepartment";
-import AddStudent from "./components/AddStudent";
+import AddStudent from './components/AddStudent';
 import AddTeacher from "./components/AddTeacher";
-import AssignCourse from "./components/AssignCourse";
+import AssignCourse from "./components/AssignTeacherToCourseAndClass";
 
 
 function App() {
@@ -32,12 +32,12 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<LoginPage setUser={setUser} />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        {/* <Route path="/admin/add-student" element={<AddStudent />} />
+        <Route path="/admin/add-student" element={<AddStudent />} />
         <Route path="/admin/add-teacher" element={<AddTeacher />} />
         <Route path="/admin/add-class" element={<AddClass />} />
         <Route path="/admin/add-course" element={<AddCourse />} />
         <Route path="/admin/add-department" element={<AddDepartment />} />
-        <Route path="/admin/assign-course" element={<AssignCourse />} /> */}
+        <Route path="/admin/assign-course" element={<AssignCourse />} />
       </Routes>
     </Router>
   );
