@@ -23,11 +23,13 @@ const AssignTeacherToCourseAndClass = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("jwt");
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.jwt; // Optional chaining to avoid errors
+      const pre="Bearer";
       if (!token) throw new Error("Token not found in localStorage.");
 
       await axios.post("http://localhost:6060/admin/assign", formData, {
-        headers: { Authorization: "Bearer"+token },
+        headers: { Authorization: `${pre} ${token}`},
       });
 
       alert("Teacher assigned successfully!");

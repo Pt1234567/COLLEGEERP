@@ -8,8 +8,8 @@ import com.project.COLLEGEERP.entities.Teacher;
 import java.util.List;
 
 public interface AssignService {
-    List<Course> getAllCourseByTeacherId(String teacherId);
-    List<Class> getAllClassByTeacherId(String teacherId);
+    List<String> getAllCourseByTeacherId(String teacherId);
+    List<String> getAllClassByTeacherId(String teacherId);
 
     List<Assign>  getAllAssignedByClassId(String classId);
 }

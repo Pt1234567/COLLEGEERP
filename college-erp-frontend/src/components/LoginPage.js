@@ -39,7 +39,7 @@ const LoginPage = ({ setUser }) => {
       } else if (user.role === "ROLE_STUDENT") {
         navigate("/student-dashboard");
       } else if (user.role === "ROLE_TEACHER") {
-        navigate("/teacher-dashboard");
+        navigate("/TeacherDashboard");
       } else {
         setError("Role not recognized");
       }

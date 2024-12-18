@@ -27,17 +27,19 @@ const AddStudent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('jwt');
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.jwt; // Optional chaining to avoid errors
+      const pre="Bearer";
       if (!token) {
         throw new Error("Token not found in localStorage.");
       }
 
       console.log(token); // Log the token
-      console.log(`Bearer ${token}`);
+      console.log( `${pre} ${token}`);
       
       const response = await axios.post("http://localhost:6060/admin/addStudent", formData, {
         headers: {
-          Authorization: "Bearer"+token // Properly use the token with "Bearer"
+          Authorization: `${pre} ${token}`// Properly use the token with "Bearer"
         },
       });
 

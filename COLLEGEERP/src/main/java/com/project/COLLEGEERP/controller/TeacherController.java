@@ -32,23 +32,23 @@ public class TeacherController {
     private AssignService assignService;
 
     @PreAuthorize("hasRole('TEACHER')")
-    @GetMapping("/select")
-    public ResponseEntity<Map<String, List<?>>> getClassesAndCourses(@RequestHeader("Authorization")String jwt) {
+    @GetMapping("/classes-and-courses")
+    public ResponseEntity<Map<String, List<String>>> getClassesAndCourses(@RequestHeader("Authorization")String jwt) {
         User user=adminService.findUserByJwt(jwt);
         Teacher teacher=user.getTeacher();
         String teacherId=teacher.getTeacherId();
-        List<Class> classes = assignService.getAllClassByTeacherId(teacherId); // Fetches all classes
-        List<Course> courses = assignService.getAllCourseByTeacherId(teacherId);// Fetches all courses
+        List<String> classes = assignService.getAllClassByTeacherId(teacherId); // Fetches all classes
+        List<String> courses = assignService.getAllCourseByTeacherId(teacherId);// Fetches all courses
 
-        Map<String, List<?>> response = new HashMap<>();
+        Map<String, List<String>> response = new HashMap<>();
         response.put("classes", classes);
         response.put("courses", courses);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response); 
     }
 
     @PreAuthorize("hasRole('TEACHER')")
-    @GetMapping("/{classId}/{courseId}/attendance")
+    @GetMapping("/classes/{classId}/courses/{courseId}/attendance")
     public ResponseEntity<List<Student>> getStudentsForClassAndCourse(
             @PathVariable String classId,
             @PathVariable String courseId) {
@@ -58,7 +58,7 @@ public class TeacherController {
     }
 
     @PreAuthorize("hasRole('TEACHER')")
-    @PostMapping("/{classId}/{courseId}/attendance")
+    @PostMapping("/classes/{classId}/courses/{courseId}/attendance")
     public ResponseEntity<AttendanceResponse> markAttendance(
             @RequestBody  Map<String, String> attendanceData,
             @PathVariable String courseId) {

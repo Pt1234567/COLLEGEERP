@@ -11,6 +11,7 @@ import AddDepartment from "./components/AddDepartment";
 import AddStudent from './components/AddStudent';
 import AddTeacher from "./components/AddTeacher";
 import AssignCourse from "./components/AssignTeacherToCourseAndClass";
+import TeacherDashboard from "./components/TeacherDashboard";
 
 
 function App() {
@@ -31,6 +32,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<LoginPage setUser={setUser} />} />
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/admin/add-student" element={<AddStudent />} />
         <Route path="/admin/add-teacher" element={<AddTeacher />} />

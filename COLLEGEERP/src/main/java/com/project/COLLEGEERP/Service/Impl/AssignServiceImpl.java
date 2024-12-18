@@ -8,6 +8,7 @@ import com.project.COLLEGEERP.repository.AssignRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,13 +18,23 @@ public class AssignServiceImpl implements AssignService {
     private AssignRepository assignRepository;
 
     @Override
-    public List<Course> getAllCourseByTeacherId(String teacherId) {
-        return assignRepository.findCourseByTeacher_TeacherId(teacherId);
+    public List<String> getAllCourseByTeacherId(String teacherId) {
+        List<Assign> assigns= assignRepository.findByTeacher_TeacherId(teacherId);
+        List<String> courses=new ArrayList<>();
+        for(Assign assign:assigns){
+            courses.add(assign.getCourse().getCourseId());
+        }
+        return courses;
     }
 
     @Override
-    public List<Class> getAllClassByTeacherId(String teacherId) {
-        return assignRepository.findClassIdByTeacher_TeacherId(teacherId);
+    public List<String> getAllClassByTeacherId(String teacherId) {
+        List<Assign> assigns= assignRepository.findByTeacher_TeacherId(teacherId);
+        List<String> classList=new ArrayList<>();
+        for(Assign assign:assigns){
+            classList.add(assign.getClassId().getId());
+        }
+        return classList;
     }
 
     @Override
